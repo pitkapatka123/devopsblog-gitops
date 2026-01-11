@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: devopsblog
-          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog:dev-health-1
+          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog:dev-fix-posts-1
           ports:
             - name: http
               containerPort: 8000
