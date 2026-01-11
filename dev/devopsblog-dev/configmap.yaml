@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devopsblog-config-dev
+  namespace: devopsblog-dev
+data: 
+  APP_ENV: "dev"
