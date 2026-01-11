@@ -1,18 +1,18 @@
-apiVersion: v1
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: devopsblog-dev
   namespace: argocd
-  spec:
-    source:
-      repoURL: 'https://github.com/valentindodovu51/devopsblog-gitops.git'
-      targetRevision: master
-      path: dev/devopsblog-dev
-      destination:
-        server: 'https://kubernetes.default.svc'
-        namespace: devopsblog-dev
-    project: default
-    syncPolicy:
-      automated:
-        prune: true
-        selfHeal: true
+spec:
+  source:
+    repoURL: 'https://github.com/valentindodovu51/devopsblog-gitops.git'
+    targetRevision: master
+    path: dev/devopsblog-dev
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: devopsblog-dev
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
