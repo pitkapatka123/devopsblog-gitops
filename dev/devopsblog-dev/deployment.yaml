@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devopsblog
+  namespace: devopsblog-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: devopsblog
+      app.kubernetes.io/instance: devopsblog-dev
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: devopsblog
+        app.kubernetes.io/instance: devopsblog-dev
+    spec:
+      containers:
+        - name: devopsblog
+          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog:dev-bootstrap
+          ports:
+            - name: http
+              containerPort: 8000

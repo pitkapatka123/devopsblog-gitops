@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: devopsblog
+  namespace: devopsblog-dev
+spec:
+  selector:
+    app.kubernetes.io/name: devopsblog
+    app.kubernetes.io/instance: devopsblog-dev
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
