@@ -15,6 +15,8 @@ spec:
         app.kubernetes.io/name: devopsblog
         app.kubernetes.io/instance: devopsblog-dev
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
         - name: devopsblog
           image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog:dev-fix-posts-1
@@ -37,6 +39,12 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 2
             failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
           resources:
             requests:
               cpu: 50m
