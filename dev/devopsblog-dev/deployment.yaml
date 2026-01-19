@@ -28,7 +28,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: devopsblog
-          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog@sha256:4bfce3214407be11cfb0cdc4b8c7da7cf0484794758f76b1ba36de1e0fe82db0
+          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog@sha256:224f4a31db620a836b4a37c967cad49128cfb3ccfc4de58749737555bab07462
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
