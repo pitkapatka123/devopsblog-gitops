@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devopsblog
+  namespace: devopsblog-prod
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  progressDeadlineSeconds: 180
+  revisionHistoryLimit: 3
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: devopsblog
+      app.kubernetes.io/instance: devopsblog-prod
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: devopsblog
+        app.kubernetes.io/instance: devopsblog-prod
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: devopsblog
+          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog@sha256:224f4a31db620a836b4a37c967cad49128cfb3ccfc4de58749737555bab07462
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 21
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      terminationGracePeriodSeconds: 15
+              

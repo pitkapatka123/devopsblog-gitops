@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devopsblog-config-prod
+  namespace: devopsblog-prod
+data: 
+  APP_ENV: "prod"
