@@ -1,4 +1,4 @@
-name: dev_validation
+name: prod_validation
 
 on:
   push:
