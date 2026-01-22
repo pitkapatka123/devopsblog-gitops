@@ -30,6 +30,11 @@ spec:
         - name: devopsblog
           image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog:sha-7e2cc1fe09c1fbd785d55ba8de888954c5c8a2b9
           imagePullPolicy: IfNotPresent
+          env:
+          - name: POSTS_S3_BUCKET
+            value: devopsblog-content
+          - name: POSTS_S3_PREFIX
+            value: dev
           ports:
             - name: http
               containerPort: 8000
