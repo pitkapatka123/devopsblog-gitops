@@ -1,0 +1,33 @@
+name: dev_validation
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - "prod/devopsblog-prod/**"  
+  workflow_run:
+    workflows: ["copy_content"]
+    types: [completed]
+  workflow_dispatch:
+    
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Smoke test prod after a change happens on the manifests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Basic health check
+        run: |
+          test -n "${{ vars.DEV_BASE_URL }}"
+          curl -fsS "${{ vars.DEV_BASE_URL }}/health"
+
+      - name: Check posts page
+        run: |
+          curl -fsS -o /dev/null -w "%{http_code}\n" "${{ vars.DEV_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
+
+      - name: Check home redirect
+        run: |
+          curl -fsS -I "${{ vars.DEV_BASE_URL }}/" | head -n 1
