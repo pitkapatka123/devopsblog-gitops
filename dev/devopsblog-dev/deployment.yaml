@@ -10,7 +10,7 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
-  progressDeadlineSeconds: 180
+  progressDeadlineSeconds: 181
   revisionHistoryLimit: 3
   minReadySeconds: 5
   selector:
