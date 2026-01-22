@@ -23,6 +23,7 @@ spec:
         app.kubernetes.io/name: devopsblog
         app.kubernetes.io/instance: devopsblog-dev
     spec:
+      serviceAccountName: devopsblog-s3
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
