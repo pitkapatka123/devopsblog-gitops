@@ -1,0 +1,36 @@
+name: copy-content
+
+on:
+  workflow_run:
+    workflows: ["dev_validate"]
+    types: [completed]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  promote:
+    name: copy the content from S3 content/dev to content/prod
+    runs-on: ubuntu-latest
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.PROMOTION_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Promote content (copy dev to prod)
+        run: |
+          aws s3 sync "s3://${{ vars.CONTENT_BUCKET }}/dev/" "s3://${{ vars.CONTENT_BUCKET }}/prod/" --delete
+
+      - name: Write promotion stamp
+        run: |
+          TS="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          echo "promoted_at=${TS}" > promotion.txt
+          echo "source_workflow_run_id=${{ github.event.workflow_run.id }}" >> promotion.txt
+          echo "source_head_sha=${{ github.event.workflow_run.head_sha }}" >> promotion.txt
+          aws s3 cp promotion.txt "s3://${{ vars.CONTENT_BUCKET }}/prod/_promotion.txt"
