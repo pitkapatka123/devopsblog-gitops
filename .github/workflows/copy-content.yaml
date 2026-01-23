@@ -2,7 +2,7 @@ name: copy-content
 
 on:
   workflow_run:
-    workflows: ["dev_validate"]
+    workflows: ["dev_validation"]
     types: [completed]
 
 permissions:
