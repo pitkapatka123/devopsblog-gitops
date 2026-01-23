@@ -1,0 +1,39 @@
+name: content_validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show target
+        run: |
+          echo "DEV_BASE_URL=${{ vars.DEV_BASE_URL }}"
+
+      - name: wait until dev is healthy
+        run: |
+          set -e
+          URL="${{ vars.DEV_BASE_URL }}/health"
+          echo "Checking: $URL"
+          for i in {1..30}; do
+            code="$(curl -s -o /dev/null -w "%{http_code}" "$URL" || true)"
+            echo "Attempt $i -> HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "DEV is healthy."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "DEV did not become healthy in time."
+          exit 1
+
+      - name: ZAP Baseline Scan (DAST)
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: "${{ vars.DEV_BASE_URL }}"
+          fail_action: true
+          allow_issue_writing: false
