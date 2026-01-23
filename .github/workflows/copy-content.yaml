@@ -4,7 +4,6 @@ on:
   workflow_run:
     workflows: ["dev_validate"]
     types: [completed]
-  workflow_dispatch:
 
 permissions:
   id-token: write
