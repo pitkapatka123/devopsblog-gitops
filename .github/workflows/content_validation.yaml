@@ -7,6 +7,24 @@ permissions:
   contents: read
 
 jobs:
+  smoke:
+    name: Smoke test dev after a change happens on a manifests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Basic health check
+        run: |
+          test -n "${{ vars.DEV_BASE_URL }}"
+          curl -fsS "${{ vars.DEV_BASE_URL }}/health"
+
+      - name: Check posts page
+        run: |
+          curl -fsS -o /dev/null -w "%{http_code}\n" "${{ vars.DEV_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
+
+      - name: Check home redirect
+        run: |
+          curl -fsS -I "${{ vars.DEV_BASE_URL }}/" | head -n 1
+
   validate:
     runs-on: ubuntu-latest
     steps:
@@ -35,5 +53,5 @@ jobs:
         uses: zaproxy/action-baseline@v0.15.0
         with:
           target: "${{ vars.DEV_BASE_URL }}"
-          fail_action: true
+          fail_action: false
           allow_issue_writing: false

@@ -6,7 +6,7 @@ on:
     paths:
       - "prod/devopsblog-prod/**"  
   workflow_run:
-    workflows: ["copy_content"]
+    workflows: ["copy-content"]
     types: [completed]
   workflow_dispatch:
     
