@@ -29,7 +29,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: devopsblog
-          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog@sha256:3884b9b3bbf760ba3e8dfacef5b3ffafd6523341dad5750e3e9d62a5f34ec6bd
+          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog@sha256:c0923d2767e67d586b7a48c93834d793e084e92e0ae39e351b3ae7e18e6c4130
           imagePullPolicy: IfNotPresent
           env:
             - name: POSTS_S3_BUCKET
