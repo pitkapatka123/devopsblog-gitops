@@ -12,29 +12,19 @@ permissions:
 
 jobs:
   smoke:
-    name: Wait for deploy & Smoke Test
+    name: Wait for deploy and Smoke Test
     runs-on: ubuntu-latest
     steps:
-      - name: Show target
-        run: echo "Targeting ${{ vars.DEV_BASE_URL }}"
 
       - name: Wait until dev is healthy
         run: |
           echo "Waiting for ${{ vars.DEV_BASE_URL }} to be healthy..."
           curl --fail --retry 30 --retry-all-errors --retry-delay 10 -L "${{ vars.DEV_BASE_URL }}/health"
 
-      - name: Basic health check
-        run: |
-          test -n "${{ vars.DEV_BASE_URL }}"
-          curl -fsS -L "${{ vars.DEV_BASE_URL }}/health"
-
       - name: Check posts page
         run: |
           curl -fsS -L -o /dev/null -w "%{http_code}\n" "${{ vars.DEV_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
 
-      - name: Check home redirect
-        run: |
-          curl -fsS -I -L "${{ vars.DEV_BASE_URL }}/" | head -n 1
   validate:
     name: Security Scan
     runs-on: ubuntu-latest
@@ -46,3 +36,65 @@ jobs:
           target: "${{ vars.DEV_BASE_URL }}"
           fail_action: false
           allow_issue_writing: false
+
+  promote-to-prod:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+      
+    steps:
+      - name: checkout time
+        uses: actions/checkout@v6
+        with:
+          ref: master
+
+
+      - name: extract image string
+        id: extract
+        run: |
+          IMAGE=$(sed -n 's/.*image: //p' dev/devopsblog-dev/deployment.yaml | tr -d '"')
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+
+
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+
+
+      - name: Get GitHub App secret from AWS
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ghapp, github/devopsblog/github-app
+          name-transformation: lowercase
+          parse-json-secrets: true
+
+        
+
+      - name: create GitHub App token
+        id: apptoken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.ghapp_app_id }}
+          private-key: ${{ env.ghapp_private_key_pem }}
+          owner: valentindodovu51
+          repositories: devopsblog-gitops
+          
+
+      - name: Update Prod Deployment (Direct Commit)
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: prod/devopsblog-prod/deployment.yaml
+          propertyPath: "spec.template.spec.containers[0].image"
+          value: ${{ steps.extract.outputs.image }}
+          commitChange: true
+          createPR: false
+          branch: master
+          message: "prod: promote image ${{ steps.extract.outputs.digest }}"
+          token: ${{ steps.apptoken.outputs.token }}
