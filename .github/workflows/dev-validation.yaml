@@ -58,6 +58,8 @@ jobs:
         run: |
           IMAGE=$(sed -n 's/.*image: //p' dev/devopsblog-dev/deployment.yaml | tr -d '"')
           echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          DIGEST=${IMAGE#*@}
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
 
 
 
