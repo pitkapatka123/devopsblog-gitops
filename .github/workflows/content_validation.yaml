@@ -26,14 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: smoke
     steps:
-      - name: Show target
-        run: |
-          echo "DEV_BASE_URL=${{ vars.DEV_BASE_URL }}"
-
-      - name: wait until dev is healthy
-        run: |
-          echo "Waiting for ${{ vars.DEV_BASE_URL }} to be healthy..."
-          curl --fail --retry 30 --retry-all-errors --retry-delay 10 -L "http://${{ vars.DEV_BASE_URL }}/health"
 
       - name: ZAP Baseline Scan (DAST)
         uses: zaproxy/action-baseline@v0.15.0
