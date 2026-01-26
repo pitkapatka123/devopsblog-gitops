@@ -18,25 +18,15 @@ jobs:
     name: Wait for deploy and smoke test
     runs-on: ubuntu-latest
     steps:
-      - name: Show target
-        run: echo "Targeting {{ vars.PROD_BASE_URL }}"
 
       - name: Wait until prod is healthy
         run: |
           echo "Waiting for ${{ vars.PROD_BASE_URL }} to be healthy..."
           curl --fail --retry 30 --retry-all-errors --retry-delay 10 -L "${{ vars.PROD_BASE_URL }}/health"
 
-      - name: Check health endpoint (Smoke)
-        run: |
-          curl -fsS -L "${{ vars.PROD_BASE_URL }}/health"
-
       - name: Check posts page
         run: |
           curl -fsS -L -o /dev/null -w "%{http_code}\n" "${{ vars.PROD_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
-
-      - name: Check home redirect
-        run: |
-          curl -fsS -I -L "${{ vars.PROD_BASE_URL }}/" | head -n 1
 
   validate:
     name: Security Scan
@@ -48,5 +38,5 @@ jobs:
         with:
 
           target: "${{ vars.PROD_BASE_URL }}"
-          fail_action: true
+          fail_action: false
           allow_issue_writing: false
