@@ -30,7 +30,7 @@ jobs:
 
       - name: Check posts page
         run: |
-          curl -fsS -L -o /dev/null -w "%{https_code}\n" "${{ vars.DEV_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
+          curl -fsS -L -o /dev/null -w "%{http_code}\n" "${{ vars.DEV_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
 
       - name: Check home redirect
         run: |
