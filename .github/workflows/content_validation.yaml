@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   smoke:
-    name: Smoke test dev after a change happens on a manifests
+    name: Smoke test dev after a new content was added
     runs-on: ubuntu-latest
 
     steps:
@@ -34,20 +34,8 @@ jobs:
 
       - name: wait until dev is healthy
         run: |
-          set -e
-          URL="${{ vars.DEV_BASE_URL }}/health"
-          echo "Checking: $URL"
-          for i in {1..30}; do
-            code="$(curl -s -o /dev/null -w "%{http_code}" "$URL" || true)"
-            echo "Attempt $i -> HTTP $code"
-            if [ "$code" = "200" ]; then
-              echo "DEV is healthy."
-              exit 0
-            fi
-            sleep 10
-          done
-          echo "DEV did not become healthy in time."
-          exit 1
+          echo "Waiting for ${{ vars.DEV_BASE_URL }} to be healthy..."
+          curl --fail --retry 30 --retry-all-errors --retry-delay 10 -L "http://${{ vars.DEV_BASE_URL }}/health"
 
       - name: ZAP Baseline Scan (DAST)
         uses: zaproxy/action-baseline@v0.15.0

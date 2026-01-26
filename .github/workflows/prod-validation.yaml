@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "master" ]
     paths:
-      - "prod/devopsblog-prod/**"  
+      - "prod/devopsblog-prod/**"   
   workflow_run:
     workflows: ["copy-content"]
     types: [completed]
@@ -15,19 +15,38 @@ permissions:
 
 jobs:
   smoke:
-    name: Smoke test prod after a change happens on the manifests
+    name: Wait for deploy and smoke test
     runs-on: ubuntu-latest
-
     steps:
-      - name: Basic health check
+      - name: Show target
+        run: echo "Targeting {{ vars.PROD_BASE_URL }}"
+
+      - name: Wait until prod is healthy
         run: |
-          test -n "${{ vars.DEV_BASE_URL }}"
-          curl -fsS "${{ vars.DEV_BASE_URL }}/health"
+          echo "Waiting for ${{ vars.PROD_BASE_URL }} to be healthy..."
+          curl --fail --retry 30 --retry-all-errors --retry-delay 10 -L "${{ vars.PROD_BASE_URL }}/health"
+
+      - name: Check health endpoint (Smoke)
+        run: |
+          curl -fsS -L "${{ vars.PROD_BASE_URL }}/health"
 
       - name: Check posts page
         run: |
-          curl -fsS -o /dev/null -w "%{http_code}\n" "${{ vars.DEV_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
+          curl -fsS -L -o /dev/null -w "%{http_code}\n" "${{ vars.PROD_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
 
       - name: Check home redirect
         run: |
-          curl -fsS -I "${{ vars.DEV_BASE_URL }}/" | head -n 1
+          curl -fsS -I -L "${{ vars.PROD_BASE_URL }}/" | head -n 1
+
+  validate:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: smoke
+    steps:
+      - name: ZAP Baseline Scan (DAST)
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+
+          target: "${{ vars.PROD_BASE_URL }}"
+          fail_action: true
+          allow_issue_writing: false

@@ -12,19 +12,37 @@ permissions:
 
 jobs:
   smoke:
-    name: Smoke test dev after a change happens on a manifests
+    name: Wait for deploy & Smoke Test
     runs-on: ubuntu-latest
-
     steps:
+      - name: Show target
+        run: echo "Targeting ${{ vars.DEV_BASE_URL }}"
+
+      - name: Wait until dev is healthy
+        run: |
+          echo "Waiting for ${{ vars.DEV_BASE_URL }} to be healthy..."
+          curl --fail --retry 30 --retry-all-errors --retry-delay 10 -L "${{ vars.DEV_BASE_URL }}/health"
+
       - name: Basic health check
         run: |
           test -n "${{ vars.DEV_BASE_URL }}"
-          curl -fsS "${{ vars.DEV_BASE_URL }}/health"
+          curl -fsS -L "${{ vars.DEV_BASE_URL }}/health"
 
       - name: Check posts page
         run: |
-          curl -fsS -o /dev/null -w "%{http_code}\n" "${{ vars.DEV_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
+          curl -fsS -L -o /dev/null -w "%{https_code}\n" "${{ vars.DEV_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
 
       - name: Check home redirect
         run: |
-          curl -fsS -I "${{ vars.DEV_BASE_URL }}/" | head -n 1
+          curl -fsS -I -L "${{ vars.DEV_BASE_URL }}/" | head -n 1
+  validate:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: smoke
+    steps:
+      - name: ZAP Baseline Scan (DAST)
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: "${{ vars.DEV_BASE_URL }}"
+          fail_action: false
+          allow_issue_writing: false
