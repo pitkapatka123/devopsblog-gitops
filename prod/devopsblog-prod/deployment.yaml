@@ -29,13 +29,13 @@ spec:
         runAsUser: 1000
       containers:
         - name: devopsblog
-          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog:sha-7e2cc1fe09c1fbd785d55ba8de888954c5c8a2b9
+          image: 648835056994.dkr.ecr.eu-central-1.amazonaws.com/devops-blog@sha256:37fc351b9170ff4f0b55431b724ffa28cc134b39ee16d8ee12d448314a92d6eb
           imagePullPolicy: IfNotPresent
           env:
-          - name: POSTS_S3_BUCKET
-            value: devopsblog-content
-          - name: POSTS_S3_PREFIX
-            value: prod
+            - name: POSTS_S3_BUCKET
+              value: devopsblog-content
+            - name: POSTS_S3_PREFIX
+              value: prod
           ports:
             - name: http
               containerPort: 8000
@@ -69,4 +69,3 @@ spec:
               cpu: 250m
               memory: 256Mi
       terminationGracePeriodSeconds: 15
-              
