@@ -43,5 +43,6 @@ jobs:
         with:
 
           target: "${{ vars.PROD_BASE_URL }}"
+          rules_file_name: 'zap-rules.conf'
           fail_action: true
           allow_issue_writing: false
