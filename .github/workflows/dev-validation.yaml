@@ -7,6 +7,10 @@ on:
       - "dev/devopsblog-dev/**"
   workflow_dispatch:
 
+concurrency:
+  group: app-ci-main
+  cancel-in-progress: false
+
 permissions:
   contents: read
   id-token: write
@@ -92,7 +96,7 @@ jobs:
           
 
       - name: Update Prod Deployment (Direct Commit)
-        uses: fjogeleit/yaml-update-action@main
+        uses: fjogeleit/yaml-update-action@v0.16.1
         with:
           valueFile: prod/devopsblog-prod/deployment.yaml
           propertyPath: "spec.template.spec.containers[0].image"

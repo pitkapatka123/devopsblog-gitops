@@ -5,6 +5,11 @@ on:
     workflows: ["content_validation"]
     types: [completed]
 
+
+concurrency:
+  group: gitops-content-promotion
+  cancel-in-progress: false
+
 permissions:
   id-token: write
   contents: read

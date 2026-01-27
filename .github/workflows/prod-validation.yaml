@@ -9,6 +9,11 @@ on:
     workflows: ["copy-content"]
     types: [completed]
   workflow_dispatch:
+
+
+concurrency:
+  group: gitops-prod-validation
+  cancel-in-progress: false
     
 permissions:
   contents: read
