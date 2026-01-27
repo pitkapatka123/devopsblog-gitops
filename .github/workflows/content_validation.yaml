@@ -27,6 +27,9 @@ jobs:
     needs: smoke
     steps:
 
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: ZAP Baseline Scan (DAST)
         uses: zaproxy/action-baseline@v0.15.0
         with:
