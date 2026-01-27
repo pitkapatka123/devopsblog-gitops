@@ -19,7 +19,7 @@ permissions:
 jobs:
   smoke:
     name: Wait for deploy and Smoke Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
 
       - name: Wait until dev is healthy
@@ -33,7 +33,7 @@ jobs:
 
   validate:
     name: Security Scan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: smoke
     steps:
       - name: ZAP Baseline Scan (DAST)
@@ -45,7 +45,7 @@ jobs:
 
   promote-to-prod:
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       id-token: write

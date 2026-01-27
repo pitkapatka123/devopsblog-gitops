@@ -9,7 +9,7 @@ permissions:
 jobs:
   smoke:
     name: Smoke test dev after a new content was added
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Wait until dev is healthy
@@ -23,7 +23,7 @@ jobs:
 
 
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: smoke
     steps:
 

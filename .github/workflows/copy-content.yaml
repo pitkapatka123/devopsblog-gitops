@@ -17,7 +17,7 @@ permissions:
 jobs:
   promote:
     name: copy the content from S3 content/dev to content/prod
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
