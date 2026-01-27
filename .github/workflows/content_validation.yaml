@@ -31,5 +31,5 @@ jobs:
         uses: zaproxy/action-baseline@v0.15.0
         with:
           target: "${{ vars.DEV_BASE_URL }}"
-          fail_action: false
+          fail_action: true
           allow_issue_writing: false
