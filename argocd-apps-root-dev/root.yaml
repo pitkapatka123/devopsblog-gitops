@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/valentindodovu51/devopsblog-gitops.git'
+    repoURL: 'https://github.com/pitkapatka123/devopsblog-gitops.git'
     targetRevision: master
     path: argocd-apps-dev
   destination:
@@ -18,3 +18,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=false
+
