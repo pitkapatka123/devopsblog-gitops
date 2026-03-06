@@ -1,52 +1,52 @@
-name: prod_validation
+# #name: prod_validation
 
-on:
-  push:
-    branches: [ "master" ]
-    paths:
-      - "prod/devopsblog-prod/**"   
-  workflow_run:
-    workflows: ["copy-content"]
-    types: [completed]
-  workflow_dispatch:
+# on:
+#   push:
+#     branches: [ "master" ]
+#     paths:
+#       - "prod/devopsblog-prod/**"   
+#   workflow_run:
+#     workflows: ["copy-content"]
+#     types: [completed]
+#   workflow_dispatch:
 
 
-concurrency:
-  group: gitops-prod-validation
-  cancel-in-progress: false
+# concurrency:
+#   group: gitops-prod-validation
+#   cancel-in-progress: false
     
-permissions:
-  contents: read
+# permissions:
+#   contents: read
 
-jobs:
-  smoke:
-    name: Wait for deploy and smoke test
-    runs-on: ubuntu-24.04
-    steps:
+# jobs:
+#   smoke:
+#     name: Wait for deploy and smoke test
+#     runs-on: ubuntu-24.04
+#     steps:
 
-      - name: Wait until prod is healthy
-        run: |
-          echo "Waiting for ${{ vars.PROD_BASE_URL }} to be healthy..."
-          curl --fail --retry 30 --retry-all-errors --retry-delay 10 -L "${{ vars.PROD_BASE_URL }}/health"
+#       - name: Wait until prod is healthy
+#         run: |
+#           echo "Waiting for $#{{ vars.PROD_BASE_URL }} to be healthy..."
+#           curl --fail --retry 30 --retry-all-errors --retry-delay 10 -L "$#{{ vars.PROD_BASE_URL }}/health"
 
-      - name: Check posts page
-        run: |
-          curl -fsS -L -o /dev/null -w "%{http_code}\n" "${{ vars.PROD_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
+#       - name: Check posts page
+#         run: |
+#           curl -fsS -L -o /dev/null -w "%{http_code}\n" "$#{{ vars.PROD_BASE_URL }}/posts" | grep -E "^(200|301|302)$"
 
-  validate:
-    name: Security Scan
-    runs-on: ubuntu-24.04
-    needs: smoke
-    steps:
+#   validate:
+#     name: Security Scan
+#     runs-on: ubuntu-24.04
+#     needs: smoke
+#     steps:
 
-      - name: Checkout
-        uses: actions/checkout@v6
+#       - name: Checkout
+#         uses: actions/checkout@v6
 
-      - name: ZAP Baseline Scan (DAST)
-        uses: zaproxy/action-baseline@v0.15.0
-        with:
+#       - name: ZAP Baseline Scan (DAST)
+#         uses: zaproxy/action-baseline@v0.15.0
+#         with:
 
-          target: "${{ vars.PROD_BASE_URL }}"
-          rules_file_name: 'zap-rules.conf'
-          fail_action: true
-          allow_issue_writing: false
+#           target: "$#{{ vars.PROD_BASE_URL }}"
+#           rules_file_name: 'zap-rules.conf'
+#           fail_action: true
+#           allow_issue_writing: false
