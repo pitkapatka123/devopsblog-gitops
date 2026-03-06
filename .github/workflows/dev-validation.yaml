@@ -96,7 +96,7 @@ jobs:
         with:
           app-id: ${{ env.ghapp_app_id }}
           private-key: ${{ env.ghapp_private_key_pem }}
-          owner: valentindodovu51
+          owner: pitkapatka123
           repositories: devopsblog-gitops
           
 
