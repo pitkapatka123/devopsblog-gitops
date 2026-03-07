@@ -33,7 +33,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: POSTS_S3_BUCKET
-              value: devopsblog-content
+              value: devopsblog-content2
             - name: POSTS_S3_PREFIX
               value: dev
           ports:
